@@ -1,5 +1,12 @@
 import type { Trip, CreateTrip, UpdateTrip, TripStatus } from '@tripflow/shared';
-import { CreateTripSchema, TripStatusSchema } from '@tripflow/shared';
+import { CreateTripSchema, TripSchema, TripStatusSchema } from '@tripflow/shared';
+
+/** Schema for validating partial updates (excludes internally-managed fields) */
+const UpdateBodySchema = TripSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).partial();
 
 const trips: Map<string, Trip> = new Map();
 
@@ -28,11 +35,13 @@ export function update(id: string, data: Partial<UpdateTrip>): Trip | undefined 
   const existing = trips.get(id);
   if (!existing) return undefined;
 
+  const parsed = UpdateBodySchema.parse(data);
+
   const updated: Trip = {
     ...existing,
-    ...data,
-    id: existing.id, // prevent id override
-    createdAt: existing.createdAt, // prevent createdAt override
+    ...parsed,
+    id: existing.id,
+    createdAt: existing.createdAt,
     updatedAt: new Date().toISOString(),
   };
   trips.set(id, updated);

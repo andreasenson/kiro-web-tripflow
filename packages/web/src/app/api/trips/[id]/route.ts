@@ -25,7 +25,13 @@ export async function PATCH(
       return NextResponse.json({ message: 'Trip not found' }, { status: 404 });
     }
     return NextResponse.json(trip);
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && error.name === 'ZodError') {
+      return NextResponse.json(
+        { message: 'Validation failed', errors: (error as any).errors },
+        { status: 400 },
+      );
+    }
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 },

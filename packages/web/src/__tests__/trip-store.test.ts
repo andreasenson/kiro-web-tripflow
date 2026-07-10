@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import {
   findAll,
   findOne,
@@ -75,7 +75,11 @@ describe('trip-store', () => {
   describe('update', () => {
     it('should update specified fields', () => {
       const trip = create(validTrip);
+      // Advance time to ensure updatedAt differs
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date(Date.now() + 1000));
       const updated = update(trip.id, { title: 'Updated Title' });
+      vi.useRealTimers();
       expect(updated).toBeDefined();
       expect(updated!.title).toBe('Updated Title');
       expect(updated!.destination).toBe('Tokyo, Japan');
@@ -90,6 +94,31 @@ describe('trip-store', () => {
       } as any);
       expect(updated!.id).toBe(trip.id);
       expect(updated!.createdAt).toBe(trip.createdAt);
+    });
+
+    it('should throw on invalid field values', () => {
+      const trip = create(validTrip);
+      // title must be non-empty string with min 1
+      expect(() => update(trip.id, { title: '' })).toThrow();
+    });
+
+    it('should throw on invalid currency length', () => {
+      const trip = create(validTrip);
+      // currency must be exactly 3 characters
+      expect(() => update(trip.id, { currency: 'ABCD' })).toThrow();
+    });
+
+    it('should throw on invalid status value', () => {
+      const trip = create(validTrip);
+      expect(() => update(trip.id, { status: 'invalid' as any })).toThrow();
+    });
+
+    it('should strip unknown fields via schema validation', () => {
+      const trip = create(validTrip);
+      // Unknown fields should be stripped by the schema (strict parsing removes them)
+      const updated = update(trip.id, { title: 'New Title', unknownField: 'bad' } as any);
+      expect(updated!.title).toBe('New Title');
+      expect((updated as any).unknownField).toBeUndefined();
     });
 
     it('should return undefined for non-existent id', () => {
