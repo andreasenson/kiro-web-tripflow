@@ -1,0 +1,28 @@
+{
+  "id": "FEAT-001",
+  "type": "fix",
+  "description": "Fix 'Failed to load trips: Failed to fetch' error by adding Next.js API rewrites and updating the API client to use relative paths. The current api-client.ts hardcodes 'http://localhost:3001' as the backend URL, but client-side fetch calls from the browser fail when the backend is not accessible at that address (production, different port, CORS). The fix adds Next.js rewrites in next.config.mjs to proxy /api/* requests to the backend, and updates api-client.ts to use relative '/api' paths. Also fix the broken Home page test.",
+  "status": "completed",
+  "steps": [
+    "Update packages/web/next.config.mjs to add an async rewrites() function that maps '/api/:path*' to the backend URL (from NEXT_PUBLIC_API_URL env var or default 'http://localhost:3001/:path*'). This makes the Next.js server proxy API calls to the backend, eliminating CORS and connectivity issues.",
+    "Update packages/web/src/lib/api-client.ts: Change BASE_URL from 'process.env.NEXT_PUBLIC_API_URL || http://localhost:3001' to '/api' (relative path). All fetch calls will now go through the Next.js proxy rewrite. This ensures it works in both development and production.",
+    "Create packages/web/.env.local with NEXT_PUBLIC_API_URL=http://localhost:3001 for local development reference (used by next.config.mjs rewrites).",
+    "Create packages/web/.env.example documenting the NEXT_PUBLIC_API_URL variable for other developers.",
+    "Fix packages/web/src/app/__tests__/page.test.tsx: The test expects the h1 to contain 'TripFlow' but the actual h1 content is 'Plan Smarter. Travel Better.' - update the assertion to match the actual heading text.",
+    "Run 'pnpm run build' to verify the build passes with the changes.",
+    "Run 'pnpm --filter @tripflow/web run test' to verify all web tests pass."
+  ],
+  "acceptance_criteria": [
+    "packages/web/next.config.mjs contains a rewrites() function that proxies /api/* to the backend",
+    "packages/web/src/lib/api-client.ts uses '/api' as the BASE_URL instead of a hardcoded http://localhost:3001",
+    "The frontend fetch calls for trips go to /api/trips (relative) which gets rewritten to http://localhost:3001/trips",
+    "pnpm run build succeeds with no errors",
+    "pnpm --filter @tripflow/web run test passes all tests including the fixed page.test.tsx"
+  ],
+  "verification": [
+    "Run: eval \"$(mise activate bash)\" && pnpm run build",
+    "Run: eval \"$(mise activate bash)\" && pnpm --filter @tripflow/web run test"
+  ],
+  "blocked_reason": null,
+  "findings": "Build and all 33 web tests pass. .gitignore had .env* pattern that excluded .env.example - added !.env.example exception. .env.local is correctly ignored by git (local dev config). Review feedback addressed: renamed NEXT_PUBLIC_API_URL to API_URL, added trailing-slash stripping, added SSR constraint comment."
+}
