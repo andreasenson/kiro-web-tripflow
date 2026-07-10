@@ -124,6 +124,7 @@ export class AiService {
       interests: input.interests,
       pace: input.pace,
       budgetLevel: input.budgetLevel,
+      notes: input.notes,
     };
 
     const prompt = buildItineraryPrompt(promptInput);

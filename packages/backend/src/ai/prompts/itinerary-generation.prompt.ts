@@ -5,14 +5,16 @@ export interface ItineraryPromptInput {
   interests?: string[];
   pace?: 'relaxed' | 'moderate' | 'packed';
   budgetLevel?: 'budget' | 'moderate' | 'luxury';
+  notes?: string;
 }
 
 export function buildItineraryPrompt(input: ItineraryPromptInput): string {
-  const { destination, startDate, endDate, interests, pace, budgetLevel } = input;
+  const { destination, startDate, endDate, interests, pace, budgetLevel, notes } = input;
 
   const interestsStr = interests?.length ? interests.join(', ') : 'general sightseeing';
   const paceStr = pace || 'moderate';
   const budgetStr = budgetLevel || 'moderate';
+  const notesStr = notes ? `\n- Additional Notes: ${notes}` : '';
 
   return `You are a travel planning assistant. Generate a detailed day-by-day itinerary for a trip.
 
@@ -22,7 +24,7 @@ Trip Details:
 - End Date: ${endDate}
 - Interests: ${interestsStr}
 - Pace: ${paceStr} (relaxed = 2-3 activities/day, moderate = 3-4, packed = 5-6)
-- Budget Level: ${budgetStr}
+- Budget Level: ${budgetStr}${notesStr}
 
 Generate the itinerary as a JSON array of entries. Each entry should have:
 - dayNumber (integer, starting at 1)
