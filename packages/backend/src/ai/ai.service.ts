@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import {
   buildItineraryPrompt,
   buildRegenerateItemPrompt,
   ItineraryPromptInput,
 } from './prompts/itinerary-generation.prompt';
+import { TripsService } from '../trips/trips.service';
 
 export interface GenerateItineraryInput {
-  destination: string;
-  startDate: string;
-  endDate: string;
   interests?: string[];
   pace?: 'relaxed' | 'moderate' | 'packed';
   budgetLevel?: 'budget' | 'moderate' | 'luxury';
+  notes?: string;
 }
 
 export interface ItineraryItem {
@@ -24,6 +24,25 @@ export interface ItineraryItem {
   latitude: number | null;
   longitude: number | null;
   notes: string | null;
+}
+
+export interface GenerateItineraryResponse {
+  entries: Array<{
+    id: string;
+    tripId: string;
+    dayNumber: number;
+    title: string;
+    startTime: string | null;
+    endTime: string | null;
+    location: string | null;
+    latitude: number | null;
+    longitude: number | null;
+    notes: string | null;
+    sortOrder: number;
+    isAiGenerated: boolean;
+    createdAt: string;
+    updatedAt: string;
+  }>;
 }
 
 export interface AiClient {
@@ -48,14 +67,45 @@ const AiItineraryResponseSchema = z.array(AiItineraryItemSchema);
 export class AiService {
   private client: AiClient;
 
-  constructor() {
+  constructor(private readonly tripsService: TripsService) {
     // Default client that calls Anthropic API
     // In tests, this is replaced via setClient()
     this.client = {
       async generateCompletion(prompt: string): Promise<string> {
         // In production, this would call the Anthropic Claude API
-        // For now, return empty array as a fallback
-        return '[]';
+        // For now, return realistic mock data as a fallback
+        return JSON.stringify([
+          {
+            dayNumber: 1,
+            title: 'Morning City Exploration',
+            startTime: '09:00',
+            endTime: '12:00',
+            location: 'City Center',
+            latitude: 40.4168,
+            longitude: -3.7038,
+            notes: 'Start with the main landmarks and popular attractions',
+          },
+          {
+            dayNumber: 1,
+            title: 'Local Cuisine Experience',
+            startTime: '13:00',
+            endTime: '15:00',
+            location: 'Old Town District',
+            latitude: 40.4155,
+            longitude: -3.7074,
+            notes: 'Try the local specialties at a well-reviewed restaurant',
+          },
+          {
+            dayNumber: 2,
+            title: 'Cultural District Visit',
+            startTime: '10:00',
+            endTime: '13:00',
+            location: 'Museum Quarter',
+            latitude: 40.4138,
+            longitude: -3.6921,
+            notes: 'Explore museums and galleries in the area',
+          },
+        ]);
       },
     };
   }
@@ -64,11 +114,13 @@ export class AiService {
     this.client = client;
   }
 
-  async generateItinerary(tripId: string, input: GenerateItineraryInput): Promise<ItineraryItem[]> {
+  async generateItinerary(tripId: string, input: GenerateItineraryInput): Promise<GenerateItineraryResponse> {
+    const trip = await this.tripsService.findOne(tripId);
+
     const promptInput: ItineraryPromptInput = {
-      destination: input.destination,
-      startDate: input.startDate,
-      endDate: input.endDate,
+      destination: trip.destination,
+      startDate: trip.startDate,
+      endDate: trip.endDate,
       interests: input.interests,
       pace: input.pace,
       budgetLevel: input.budgetLevel,
@@ -92,7 +144,10 @@ export class AiService {
       throw new Error(`AI response failed schema validation: ${issues}`);
     }
 
-    return validationResult.data.map((item) => ({
+    const now = new Date().toISOString();
+    const entries = validationResult.data.map((item, index) => ({
+      id: uuidv4(),
+      tripId,
       dayNumber: item.dayNumber,
       title: item.title,
       startTime: item.startTime || null,
@@ -101,7 +156,13 @@ export class AiService {
       latitude: item.latitude || null,
       longitude: item.longitude || null,
       notes: item.notes || null,
+      sortOrder: index,
+      isAiGenerated: true,
+      createdAt: now,
+      updatedAt: now,
     }));
+
+    return { entries };
   }
 
   async regenerateItem(
