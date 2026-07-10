@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "fix",
   "description": "Create Next.js API route handlers for trips CRUD operations so the frontend can call /api/trips directly on Vercel without requiring a separate backend server. Replace the rewrite-based proxy approach with actual API route handlers that use an in-memory store (since Vercel serverless functions are ephemeral and better-sqlite3 file DB won't persist across invocations). This ensures /api/trips responds correctly in both local dev and Vercel deployment.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create packages/web/src/app/api/trips/route.ts with GET (list all trips) and POST (create trip) handlers. Use an in-memory Map as the data store. Import and use Zod schemas from @tripflow/shared for validation. Generate UUIDs for new trips. Return proper JSON responses with correct status codes (200 for GET, 201 for POST).",
     "Create packages/web/src/app/api/trips/[id]/route.ts with GET (single trip), PATCH (update), and DELETE handlers. Look up trips by ID from the store, return 404 if not found. Support partial updates via PATCH.",
@@ -27,5 +27,5 @@
     "export PATH=/root/.local/share/mise/shims:$PATH && cd /projects/sandbox/kiro-web-tripflow && pnpm run test"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All acceptance criteria met. Build and tests pass. Next.js 14 API routes use params as Promise (await params pattern). The in-memory store works correctly within a session but data will not persist across serverless cold starts on Vercel."
 }
