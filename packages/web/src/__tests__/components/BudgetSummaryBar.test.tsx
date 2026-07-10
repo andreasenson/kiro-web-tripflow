@@ -43,10 +43,10 @@ describe('BudgetSummaryBar', () => {
     expect(screen.getByText('0% used')).toBeInTheDocument();
   });
 
-  it('uses USD as default currency', () => {
+  it('uses PHP as default currency', () => {
     render(<BudgetSummaryBar allocated={100} spent={50} />);
 
-    expect(screen.getByText('Spent: USD 50.00')).toBeInTheDocument();
-    expect(screen.getByText('Budget: USD 100.00')).toBeInTheDocument();
+    expect(screen.getByText('Spent: PHP 50.00')).toBeInTheDocument();
+    expect(screen.getByText('Budget: PHP 100.00')).toBeInTheDocument();
   });
 });

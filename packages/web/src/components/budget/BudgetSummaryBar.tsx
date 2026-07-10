@@ -6,7 +6,7 @@ interface BudgetSummaryBarProps {
   currency?: string;
 }
 
-export function BudgetSummaryBar({ allocated, spent, currency = 'USD' }: BudgetSummaryBarProps) {
+export function BudgetSummaryBar({ allocated, spent, currency = 'PHP' }: BudgetSummaryBarProps) {
   const percentage = allocated > 0 ? Math.min((spent / allocated) * 100, 100) : 0;
   const isOverBudget = spent > allocated;
 
