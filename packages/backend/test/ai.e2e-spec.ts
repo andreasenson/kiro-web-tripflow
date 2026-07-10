@@ -88,24 +88,28 @@ describe('AI (e2e)', () => {
     const res = await request(app.getHttpServer())
       .post(`/trips/${tripId}/ai/generate-itinerary`)
       .send({
-        destination: 'Barcelona, Spain',
-        startDate: '2025-08-01',
-        endDate: '2025-08-04',
         interests: ['architecture', 'food'],
         pace: 'moderate',
         budgetLevel: 'moderate',
       })
       .expect(200);
 
-    expect(Array.isArray(res.body)).toBe(true);
-    expect(res.body.length).toBe(3);
-    expect(res.body[0]).toHaveProperty('dayNumber', 1);
-    expect(res.body[0]).toHaveProperty('title', 'Visit Sagrada Familia');
-    expect(res.body[0]).toHaveProperty('startTime', '09:00');
-    expect(res.body[0]).toHaveProperty('location', 'Sagrada Familia, Barcelona');
-    expect(res.body[0]).toHaveProperty('latitude', 41.4036);
-    expect(res.body[0]).toHaveProperty('longitude', 2.1744);
-    expect(res.body[0]).toHaveProperty('notes');
+    expect(res.body).toHaveProperty('entries');
+    expect(Array.isArray(res.body.entries)).toBe(true);
+    expect(res.body.entries.length).toBe(3);
+    expect(res.body.entries[0]).toHaveProperty('id');
+    expect(res.body.entries[0]).toHaveProperty('tripId', tripId);
+    expect(res.body.entries[0]).toHaveProperty('dayNumber', 1);
+    expect(res.body.entries[0]).toHaveProperty('title', 'Visit Sagrada Familia');
+    expect(res.body.entries[0]).toHaveProperty('startTime', '09:00');
+    expect(res.body.entries[0]).toHaveProperty('location', 'Sagrada Familia, Barcelona');
+    expect(res.body.entries[0]).toHaveProperty('latitude', 41.4036);
+    expect(res.body.entries[0]).toHaveProperty('longitude', 2.1744);
+    expect(res.body.entries[0]).toHaveProperty('notes');
+    expect(res.body.entries[0]).toHaveProperty('sortOrder', 0);
+    expect(res.body.entries[0]).toHaveProperty('isAiGenerated', true);
+    expect(res.body.entries[1]).toHaveProperty('sortOrder', 1);
+    expect(res.body.entries[2]).toHaveProperty('sortOrder', 2);
   });
 
   it('POST /trips/:tripId/ai/regenerate-item/:itemId - should return a different suggestion', async () => {
@@ -153,9 +157,9 @@ describe('AI (e2e)', () => {
     const res = await request(app.getHttpServer())
       .post(`/trips/${tripId}/ai/generate-itinerary`)
       .send({
-        destination: 'Barcelona, Spain',
-        startDate: '2025-08-01',
-        endDate: '2025-08-04',
+        interests: ['architecture'],
+        pace: 'moderate',
+        budgetLevel: 'moderate',
       })
       .expect(500);
 

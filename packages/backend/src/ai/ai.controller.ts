@@ -1,5 +1,5 @@
 import { Controller, Post, Param, Body, HttpCode, HttpStatus } from '@nestjs/common';
-import { AiService, GenerateItineraryInput } from './ai.service';
+import { AiService, GenerateItineraryInput, GenerateItineraryResponse } from './ai.service';
 
 @Controller('trips/:tripId/ai')
 export class AiController {
@@ -10,7 +10,7 @@ export class AiController {
   generateItinerary(
     @Param('tripId') tripId: string,
     @Body() input: GenerateItineraryInput,
-  ) {
+  ): Promise<GenerateItineraryResponse> {
     return this.aiService.generateItinerary(tripId, input);
   }
 

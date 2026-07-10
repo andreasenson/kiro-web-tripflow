@@ -202,8 +202,8 @@ export const aiApi = {
     tripId: string,
     preferences: {
       interests: string[];
-      pace: 'relaxed' | 'moderate' | 'busy';
-      budgetLevel: 'budget' | 'mid-range' | 'luxury';
+      pace: 'relaxed' | 'moderate' | 'packed';
+      budgetLevel: 'budget' | 'moderate' | 'luxury';
       notes?: string;
     },
   ): Promise<{ entries: ItineraryEntry[] }> {

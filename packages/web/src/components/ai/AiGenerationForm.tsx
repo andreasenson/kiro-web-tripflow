@@ -7,8 +7,8 @@ import { Select } from '../ui/Select';
 interface AiGenerationFormProps {
   onGenerate: (preferences: {
     interests: string[];
-    pace: 'relaxed' | 'moderate' | 'busy';
-    budgetLevel: 'budget' | 'mid-range' | 'luxury';
+    pace: 'relaxed' | 'moderate' | 'packed';
+    budgetLevel: 'budget' | 'moderate' | 'luxury';
     notes?: string;
   }) => void;
   loading?: boolean;
@@ -31,8 +31,8 @@ const INTEREST_OPTIONS = [
 
 export function AiGenerationForm({ onGenerate, loading = false }: AiGenerationFormProps) {
   const [interests, setInterests] = useState<string[]>([]);
-  const [pace, setPace] = useState<'relaxed' | 'moderate' | 'busy'>('moderate');
-  const [budgetLevel, setBudgetLevel] = useState<'budget' | 'mid-range' | 'luxury'>('mid-range');
+  const [pace, setPace] = useState<'relaxed' | 'moderate' | 'packed'>('moderate');
+  const [budgetLevel, setBudgetLevel] = useState<'budget' | 'moderate' | 'luxury'>('moderate');
   const [notes, setNotes] = useState('');
 
   const toggleInterest = (interest: string) => {
@@ -80,21 +80,21 @@ export function AiGenerationForm({ onGenerate, loading = false }: AiGenerationFo
       <Select
         label="Pace"
         value={pace}
-        onChange={(e) => setPace(e.target.value as 'relaxed' | 'moderate' | 'busy')}
+        onChange={(e) => setPace(e.target.value as 'relaxed' | 'moderate' | 'packed')}
         options={[
           { value: 'relaxed', label: 'Relaxed - fewer activities, more free time' },
           { value: 'moderate', label: 'Moderate - balanced schedule' },
-          { value: 'busy', label: 'Busy - packed with activities' },
+          { value: 'packed', label: 'Packed - filled with activities' },
         ]}
       />
 
       <Select
         label="Budget Level"
         value={budgetLevel}
-        onChange={(e) => setBudgetLevel(e.target.value as 'budget' | 'mid-range' | 'luxury')}
+        onChange={(e) => setBudgetLevel(e.target.value as 'budget' | 'moderate' | 'luxury')}
         options={[
           { value: 'budget', label: 'Budget - affordable options' },
-          { value: 'mid-range', label: 'Mid-range - moderate spending' },
+          { value: 'moderate', label: 'Moderate - moderate spending' },
           { value: 'luxury', label: 'Luxury - premium experiences' },
         ]}
       />

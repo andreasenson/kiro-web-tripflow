@@ -18,8 +18,8 @@ export default function AiAssistPage() {
 
   const handleGenerate = async (preferences: {
     interests: string[];
-    pace: 'relaxed' | 'moderate' | 'busy';
-    budgetLevel: 'budget' | 'mid-range' | 'luxury';
+    pace: 'relaxed' | 'moderate' | 'packed';
+    budgetLevel: 'budget' | 'moderate' | 'luxury';
     notes?: string;
   }) => {
     setLoading(true);
