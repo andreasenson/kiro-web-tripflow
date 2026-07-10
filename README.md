@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TripFlow
+
+A travel planning and management application built as a TypeScript monorepo. TripFlow supports **Planning Mode** (trip creation, itinerary building, budget management, AI-powered suggestions) and **Travelling Mode** (daily view, expense logging, offline-first sync).
+
+## Project Structure
+
+```
+packages/
+  shared/     - Shared TypeScript types, Zod validation schemas, and sync utilities
+  backend/    - NestJS REST API (trips, itinerary, budget, sync, AI generation)
+  web/        - Next.js frontend (Planning Mode + Travelling Mode)
+```
+
+**Tech stack:** TypeScript, pnpm workspaces, Turborepo, NestJS, Next.js, TypeORM (SQLite for dev/test), Zod, Tailwind CSS, Vitest + Jest.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 22+
+- pnpm 10+
+
+### Install
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Build
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm run build
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Test
 
-## Learn More
+```bash
+pnpm run test
+```
 
-To learn more about Next.js, take a look at the following resources:
+### Development
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# Start backend API
+pnpm --filter @tripflow/backend run start:dev
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Start web frontend
+pnpm --filter @tripflow/web run dev
+```
 
-## Deploy on Vercel
+## Packages
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Package | Description |
+|---------|-------------|
+| `@tripflow/shared` | Zod schemas, TypeScript types, and offline sync utilities (field-level LWW conflict resolution) |
+| `@tripflow/backend` | NestJS API with CRUD for trips, itinerary, budget, sync engine, and AI itinerary generation |
+| `@tripflow/web` | Next.js app with trip management UI, offline queue, and sync status indicator |
