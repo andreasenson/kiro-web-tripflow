@@ -1,0 +1,27 @@
+{
+  "project_type": "TypeScript monorepo (pnpm workspaces + Turborepo) with NestJS backend and Next.js frontend",
+  "language": "TypeScript",
+  "build_system": "pnpm workspaces + Turborepo. Run commands from repo root with PATH=/root/.local/share/mise/shims:$PATH",
+  "test_framework": "Vitest (web), Jest (backend, shared). Web uses @testing-library/react with jsdom. Config at packages/web/vitest.config.ts",
+  "build_command": "export PATH=/root/.local/share/mise/shims:$PATH && cd /projects/sandbox/kiro-web-tripflow && pnpm run build",
+  "test_command": "export PATH=/root/.local/share/mise/shims:$PATH && cd /projects/sandbox/kiro-web-tripflow && pnpm run test",
+  "verification_instructions": "1. Run pnpm run build from repo root. 2. Run pnpm run test from repo root. 3. Verify no TypeScript errors.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "export PATH=/root/.local/share/mise/shims:$PATH (node 22 + pnpm 10 available via mise). node_modules already installed.",
+  "environment_constraints": "INTEGRATIONS_ONLY network - no external package installs. Use only pre-installed packages in node_modules. mise shims path required for node/pnpm.",
+  "contribution_requirements": "AGENTS.md warns Next.js may differ from training data. No Next.js docs directory found at node_modules/next/dist/docs/ (mentioned path does not exist).",
+  "key_patterns": "Backend uses NestJS + TypeORM + better-sqlite3. Frontend uses Next.js 14 App Router, client components with 'use client'. API client at packages/web/src/lib/api-client.ts uses relative /api base URL. Shared package exports Zod schemas and TypeScript types. Vercel deployment via packages/web/vercel.json.",
+  "relevant_files": [
+    "packages/web/next.config.mjs",
+    "packages/web/src/lib/api-client.ts",
+    "packages/web/src/app/trips/page.tsx",
+    "packages/web/vercel.json",
+    "packages/web/package.json",
+    "packages/backend/src/trips/trips.controller.ts",
+    "packages/backend/src/trips/trips.service.ts",
+    "packages/backend/src/trips/entities/trip.entity.ts",
+    "packages/shared/src/schemas/trip.schema.ts",
+    "packages/shared/src/types/index.ts"
+  ],
+  "directory_structure": "Root: pnpm-workspace.yaml, turbo.json, tsconfig.base.json. packages/shared/src/ has schemas/ and types/. packages/backend/src/ has trips/, itinerary/, budget/, sync/, ai/ modules. packages/web/src/ has app/ (pages), lib/ (api-client, offline-queue, sync-manager), components/, __tests__/."
+}

@@ -14,7 +14,10 @@ import type {
   SyncOperation,
 } from '@tripflow/shared';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+// NOTE: This relative URL works only from client components (browser context).
+// If this client is ever used from server components or SSR, an absolute URL with
+// the backend origin will be needed since relative URLs cannot resolve without a host.
+const BASE_URL = '/api';
 
 export class ApiError extends Error {
   constructor(

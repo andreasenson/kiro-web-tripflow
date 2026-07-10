@@ -1,0 +1,7 @@
+{
+  "task_id": "task-fix-trips-fetch-error",
+  "task_description": "Fix 'Failed to load trips: Failed to fetch' error by replacing the broken rewrite-to-localhost proxy with actual Next.js API route handlers that work on Vercel serverless deployment",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001"],
+  "blocked_reason": null
+}

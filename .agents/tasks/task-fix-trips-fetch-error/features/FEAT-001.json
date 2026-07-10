@@ -1,0 +1,31 @@
+{
+  "id": "FEAT-001",
+  "type": "fix",
+  "description": "Create Next.js API route handlers for trips CRUD operations so the frontend can call /api/trips directly on Vercel without requiring a separate backend server. Replace the rewrite-based proxy approach with actual API route handlers that use an in-memory store (since Vercel serverless functions are ephemeral and better-sqlite3 file DB won't persist across invocations). This ensures /api/trips responds correctly in both local dev and Vercel deployment.",
+  "status": "completed",
+  "steps": [
+    "Create packages/web/src/app/api/trips/route.ts with GET (list all trips) and POST (create trip) handlers. Use an in-memory Map as the data store. Import and use Zod schemas from @tripflow/shared for validation. Generate UUIDs for new trips. Return proper JSON responses with correct status codes (200 for GET, 201 for POST).",
+    "Create packages/web/src/app/api/trips/[id]/route.ts with GET (single trip), PATCH (update), and DELETE handlers. Look up trips by ID from the store, return 404 if not found. Support partial updates via PATCH.",
+    "Create packages/web/src/app/api/trips/[id]/mode/route.ts with PATCH handler for switching trip status (planning/travelling/completed).",
+    "Create a shared data store module at packages/web/src/lib/trip-store.ts that exports the in-memory trips Map and helper functions (findAll, findOne, create, update, remove, switchMode). This allows the route handlers to share state within a single serverless invocation and keeps the route files clean.",
+    "Update packages/web/next.config.mjs to remove the rewrites() function entirely (or keep it only for non-trips API paths if needed for other endpoints). The /api/trips routes are now handled directly by Next.js API routes and don't need proxying.",
+    "Add a test file at packages/web/src/__tests__/trip-store.test.ts that tests the trip-store module: creating trips, listing, getting by ID, updating, deleting, and switching mode. Use Vitest."
+  ],
+  "acceptance_criteria": [
+    "GET /api/trips returns 200 with a JSON array",
+    "POST /api/trips with valid body returns 201 with the created trip including id, createdAt, updatedAt",
+    "GET /api/trips/[id] returns the trip or 404",
+    "PATCH /api/trips/[id] updates fields and returns the updated trip",
+    "DELETE /api/trips/[id] returns 204",
+    "PATCH /api/trips/[id]/mode updates the status field",
+    "The next.config.mjs no longer rewrites /api/* to localhost:3001",
+    "pnpm run build succeeds (Next.js compiles the new API routes)",
+    "pnpm run test succeeds (new trip-store tests pass)"
+  ],
+  "verification": [
+    "export PATH=/root/.local/share/mise/shims:$PATH && cd /projects/sandbox/kiro-web-tripflow && pnpm run build",
+    "export PATH=/root/.local/share/mise/shims:$PATH && cd /projects/sandbox/kiro-web-tripflow && pnpm run test"
+  ],
+  "blocked_reason": null,
+  "findings": "All acceptance criteria met. Build and tests pass. Next.js 14 API routes use params as Promise (await params pattern). The in-memory store works correctly within a session but data will not persist across serverless cold starts on Vercel. Review feedback addressed: added Zod schema validation to update path, improved PATCH error handling to distinguish ZodError (400) from other errors (500), and added tests for validation behavior."
+}

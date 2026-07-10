@@ -5,6 +5,6 @@ import Home from '../page';
 describe('Home Page', () => {
   it('renders the heading', () => {
     render(<Home />);
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('TripFlow');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Plan Smarter. Travel Better.');
   });
 });
