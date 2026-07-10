@@ -1,6 +1,5 @@
 {
-  "buildCommand": "pnpm turbo run build --filter=@tripflow/web...",
-  "outputDirectory": "packages/web/.next",
-  "installCommand": "pnpm install",
+  "buildCommand": "cd ../.. && pnpm turbo run build --filter=@tripflow/web...",
+  "installCommand": "cd ../.. && pnpm install",
   "framework": "nextjs"
 }
