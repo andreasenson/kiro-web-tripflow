@@ -1,5 +1,0 @@
-{
-  "buildCommand": "cd ../.. && pnpm turbo run build --filter=@tripflow/web...",
-  "installCommand": "cd ../.. && pnpm install",
-  "framework": "nextjs"
-}
