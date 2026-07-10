@@ -27,5 +27,5 @@
     "export PATH=/root/.local/share/mise/shims:$PATH && cd /projects/sandbox/kiro-web-tripflow && pnpm run test"
   ],
   "blocked_reason": null,
-  "findings": "All acceptance criteria met. Build and tests pass. Next.js 14 API routes use params as Promise (await params pattern). The in-memory store works correctly within a session but data will not persist across serverless cold starts on Vercel."
+  "findings": "All acceptance criteria met. Build and tests pass. Next.js 14 API routes use params as Promise (await params pattern). The in-memory store works correctly within a session but data will not persist across serverless cold starts on Vercel. Review feedback addressed: added Zod schema validation to update path, improved PATCH error handling to distinguish ZodError (400) from other errors (500), and added tests for validation behavior."
 }
